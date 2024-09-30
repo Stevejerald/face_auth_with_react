@@ -2,22 +2,56 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function Protected() {
+  // State variable to store the user's account information
   const [account, setAccount] = useState(null);
+
+  // Use the useNavigate hook to get the navigate function
   const navigate = useNavigate();
 
+  // Use the useEffect hook to check if the user is logged in when the component mounts
   useEffect(() => {
+    // Check if the user is logged in by checking the presence of the "faceAuth" item in local storage
     if (!localStorage.getItem("faceAuth")) {
+      // If not logged in, redirect to the login page
       navigate("/login");
+    } else {
+      // If logged in, parse the "faceAuth" item from local storage and update the account state variable
+      const { account } = JSON.parse(localStorage.getItem("faceAuth"));
+      setAccount(account);
     }
-
-    const { account } = JSON.parse(localStorage.getItem("faceAuth"));
-    setAccount(account);
   }, []);
 
+  // Use another useEffect to handle the automatic redirection
+  useEffect(() => {
+    if (!account) return;
+
+    // Define the URLs based on the account fullName
+    let url = "https://edenpixel.in/asok/qr_scanner.php?user_id=1&stage_no=1"; // Default URL
+
+    switch (account.fullName) {
+      case "User1":
+        url = `https://edenpixel.in/asok/qr_scanner.php?user_id=1&stage_no=1`;
+        break;
+      case "User2":
+        url = `https://edenpixel.in/asok/qr_scanner.php?user_id=2&stage_no=2`;
+        break;
+      case "User3":
+        url = "https://edenpixel.in/asok/Dashboard/admin/?user_id=100";
+        break;
+      default:
+        // Use default URL or handle other cases
+    }
+
+    // Open the URL in a new tab
+    window.open(url, "_blank");
+  }, [account]); // This useEffect runs whenever `account` changes
+
+  // If the account state variable is null or undefined, return null
   if (!account) {
     return null;
   }
 
+  // Return the JSX element that displays the user's profile information
   return (
     <div className="bg-white pt-40 md:pt-60">
       <div className="mx-auto max-w-7xl">
@@ -30,10 +64,7 @@ function Protected() {
             src={
               account?.type === "CUSTOM"
                 ? account.picture
-                : // : import.meta.env.DEV
-                  // ? `/temp-accounts/${account.picture}`
-                  // : `/react-face-auth/temp-accounts/${account.picture}`
-                  `/temp-accounts/${account.picture}`
+                : `/temp-accounts/${account.picture}`
             }
             alt={account.fullName}
           />
