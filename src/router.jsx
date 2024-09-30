@@ -4,7 +4,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
 } from "react-router-dom";
-import Home from "./pages/Home";
+import Home from "./pages/UserSelect";
 import Login from "./pages/Login";
 import Layout from "./pages/Layout";
 import UserSelect from "./pages/UserSelect";
@@ -27,3 +27,4 @@ const router = createBrowserRouter(
 );
 
 export default router;
+
